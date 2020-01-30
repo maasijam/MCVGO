@@ -3,7 +3,7 @@
 #include <OneButton.h>
 
 // mode0: 8 Gates, 8 CV Pitch LEDS: 000
-// mode1: 4 Gates (1-4), 4 Clock Gates (5-8 - 1/4, 1/8, 1/16, 1/2), 4 CV Pitch (1-4), 4 CV Mod (5-8) LEDS: 100 
+// mode1: 4 Gates (1-4), 3 Clock Gates (5-7 - 1/4, 1/8, 1/16), 1 Start Trig (8), 4 CV Pitch (1-4), 4 CV Mod (5-8) LEDS: 100 
 // mode2: 4 Gates (1-4), 4 Clock Gates (5-8 - 1/4, 1/8, 1/16, 1/2), 4 CV Pitch (1-4), 4 CV Vel (5-8) LEDS: 110 
 // mode3: 6 Clock Gates (1-6 - 1/4, 1/8, 1/16, 1/2), 7 Start Trig, 8 Stop Trig, 8 CV Mod LEDS: 111
 // mode4: 4 Gates (1-4), 3 Clock Gates (5-7 - 1/4, 1/8, 1/2), 8 Start Trig, 4 CV Pitch (1-4), 4 CV Mod (5-8) LEDS: 001
@@ -120,7 +120,7 @@ void OnNoteOn(byte channel, byte pitch, byte velocity) {
     }
   }
 
-  else if (mode == 1 || mode == 2 || mode == 4 || mode == 5) {
+  else if (mode == 1) {
     if (channel < 5) {
 
       pitch_values[channel - 1] = pitch;
@@ -144,7 +144,7 @@ void OnNoteOff(byte channel, byte pitch, byte velocity) {
     }
   }
 
-  else if (mode == 1 || mode == 2 || mode == 4 || mode == 5) {
+  else if (mode == 1) {
     if (channel < 5) {
       writeGate(channel - 1, LOW);
     }
@@ -162,8 +162,11 @@ void OnPitchChange (byte channel, int pitch_change) {
     }
   }
 
-  if (mode == 2) {
-    //writeDAC(cs_pin - ((channel - 1) / 2), (channel - 1) & 1, map(pitch_change, 0, 16383, 0, 4095));
+  if (mode == 1) {
+    if (channel < 5) {
+      pitchbend_value[channel - 1] = map(pitch_change, 0, 16383, pitchbend_value_negative, pitchbend_value_positive);
+      writeDAC(cs_pin - channel + 1, 1, constrain(map((pitch_values[channel - 1] - offset_pitch) * 100.0 + pitchbend_value[channel - 1], 0.0, voltage_range, 0.0, 4095.0), 0.0, 4095.0));
+    }
   }
 }
 
@@ -294,6 +297,10 @@ void writeGate(byte bit_number, byte bit_value) {
 
 void clickBtn() {
   Serial.println("clickBtn");
+  for (int i = 0; i < 8; i ++) {
+    writeGate(i, LOW);
+    //delay(50);
+  }
   mode++;
   if(mode == 6){mode=0;}
 }
