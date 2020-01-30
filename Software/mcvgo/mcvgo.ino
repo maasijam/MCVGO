@@ -120,11 +120,14 @@ void OnNoteOn(byte channel, byte pitch, byte velocity) {
     }
   }
 
-  else if (mode == 1) {
+  else if (mode == 1 || mode == 2) {
     if (channel < 5) {
 
-      pitch_values[channel - 1] = pitch;
+        pitch_values[channel - 1] = pitch;
         writeDAC(cs_pin - ((channel - 1) / 2), (channel) & 1, constrain(map((pitch - offset_pitch) * 100.0 + pitchbend_value[channel - 1], 0.0, voltage_range, 0.0, 4095.0), 0.0, 4095.0));
+        if (mode == 2) {
+          writeDAC((cs_pin - 2) - ((channel - 1) / 2), (channel) & 1, map(velocity, 0, 127, 0, 4095));
+        }
         if (velocity > 0) {
           writeGate(channel - 1, HIGH);
         }
@@ -144,7 +147,7 @@ void OnNoteOff(byte channel, byte pitch, byte velocity) {
     }
   }
 
-  else if (mode == 1) {
+  else if (mode == 1 || mode == 2 || mode == 5) {
     if (channel < 5) {
       writeGate(channel - 1, LOW);
     }
@@ -158,58 +161,54 @@ void OnPitchChange (byte channel, int pitch_change) {
   if (mode == 0) {
     if (channel < 9) {
       pitchbend_value[channel - 1] = map(pitch_change, 0, 16383, pitchbend_value_negative, pitchbend_value_positive);
-      writeDAC(cs_pin - channel + 1, 1, constrain(map((pitch_values[channel - 1] - offset_pitch) * 100.0 + pitchbend_value[channel - 1], 0.0, voltage_range, 0.0, 4095.0), 0.0, 4095.0));
+      writeDAC(cs_pin - ((channel - 1) / 2), (channel) & 1, constrain(map((pitch_values[channel - 1] - offset_pitch) * 100.0 + pitchbend_value[channel - 1], 0.0, voltage_range, 0.0, 4095.0), 0.0, 4095.0));
     }
   }
 
   if (mode == 1) {
     if (channel < 5) {
       pitchbend_value[channel - 1] = map(pitch_change, 0, 16383, pitchbend_value_negative, pitchbend_value_positive);
-      writeDAC(cs_pin - channel + 1, 1, constrain(map((pitch_values[channel - 1] - offset_pitch) * 100.0 + pitchbend_value[channel - 1], 0.0, voltage_range, 0.0, 4095.0), 0.0, 4095.0));
+      writeDAC(cs_pin - ((channel - 1) / 2), (channel) & 1, constrain(map((pitch_values[channel - 1] - offset_pitch) * 100.0 + pitchbend_value[channel - 1], 0.0, voltage_range, 0.0, 4095.0), 0.0, 4095.0));
     }
   }
 }
 
 void OnControlChange (byte channel, byte control, byte value) {
-  if (mode == 1 || mode == 4) {
+  if (mode == 1) {
     if (channel > 4 && channel < 9) {
       if (control == 1) {
         writeDAC(cs_pin - ((channel - 1) / 2), (channel) & 1, map(value, 0, 127, 0, 4095));
       }
     }
   }
-
-   if (mode == 3) {
-    if (channel < 9) {
-      if (control == 1) {
-        writeDAC(cs_pin - ((channel - 1) / 2), (channel) & 1, map(value, 0, 127, 0, 4095));
-      }
-    }
-  }
-
 }
 
 void OnClock(byte clockbyte) {
+
+  // clock (decimal 248, hex 0xF8)
+  // start (decimal 250, hex 0xFA)
+  // continue (decimal 251, hex 0xFB)
+  // stop (decimal 252, hex 0xFC)
+  
   if (mode == 1 || mode == 2) {
     if(clockbyte == 0xf8 && play_flag == 1) {
       ////digitalWriteFast(10, 1 - bitRead(clock_tick, 0)); // 12 ppqn
-      writeGate(4, 1 - bitRead(clock_tick / 12, 0)); // quarter note 
-      writeGate(5, 1 - bitRead(clock_tick / 6, 0)); // eigths note
-      writeGate(6, 1 - bitRead(clock_tick / 3, 0)); // sixteenths note
-      writeGate(7, 1 - bitRead(clock_tick / 24, 0)); // half note
-      ////digitalWriteFast(gate_pin[5], 1 - bitRead(clock_tick / 48, 0)); // whole note
-      ////digitalWriteFast(gate_pin[5], 1 - bitRead(clock_tick / 2, 0)); //  eigths t note
-      ////digitalWriteFast(gate_pin[5], 1 - bitRead(clock_tick / 4, 0)); // quarter t note
+      writeGate(4, 1 - bitRead(clock_tick / 1, 0)); // quarter note 
+      writeGate(5, 1 - bitRead(clock_tick / 24, 0)); // half note
+      writeGate(6, 1 - bitRead(clock_tick / 6, 0)); // eights note
+      if(play_tick == 1) {
+        writeGate(7, HIGH); // half note
+      }
       
       clock_tick ++; 
   
-      if(clock_tick == 48) {
+      if(clock_tick == 96) {
         clock_tick = 0; 
       }
   
-      if(clock_tick == 3 && play_tick == 1) {
+      if(clock_tick == 6 && play_tick == 1) {
         play_tick = 0;
-        //digitalWriteFast(11, LOW);
+        
       }
     }
     
@@ -218,11 +217,9 @@ void OnClock(byte clockbyte) {
       play_tick = 1;
       clock_value = 0; 
       clock_tick = 0; 
-      //digitalWriteFast(11, HIGH); 
     }
   
     if(clockbyte == 0xfc) { // stop byte
-      ////digitalWriteFast(11, LOW);
       writeGate(4, LOW);
       writeGate(5, LOW);
       writeGate(6, LOW);
