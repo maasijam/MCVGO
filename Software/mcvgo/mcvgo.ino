@@ -32,7 +32,7 @@ OneButton btn(sw, true);
 
 const int pitchbend_value_positive = 1200; 
 const int pitchbend_value_negative = -1200;
-const float offset_pitch = 60;
+const float offset_pitch = 36;
 
 
 const int LED = 13;
