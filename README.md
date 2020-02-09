@@ -8,6 +8,7 @@ Overview:
 
 * CV pitch/velocity/mod output from 0V to 4V (four octaves pitch range)
 * Gates/triggers/clock output 0 and 5V
+* Class Compliant (no driver needed)
 * 6 modes:
   * mode 0 (000): CV Pitch (1-8), Gates (1-8)
   * mode 1 (100): CV Pitch/Vel (1-4/5-8), Gates (1-4), Clock 24ppqn (5), Clock 1/4 (6), Clock 1/2 (7), Gate Run/Stop (8)
