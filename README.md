@@ -8,3 +8,5 @@ Overview:
 
 * CV pitch/velocity/mod output from 0V to 4V (four octaves pitch range)
 * Gates/triggers/clock output 0 and 5V
+* 6 modes:
+  * mode0 (000): CV Pitch (1-8), Gates (1-8)
