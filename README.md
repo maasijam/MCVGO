@@ -18,3 +18,13 @@ Overview:
   * mode 4 (001): CV Pitch/Vel (1-2/5-6), CV Mod (3-4/7-8), Gates (1-2), Clock 24ppqn (3), Clock 1/4 (4), Clock 1/2 (5), Clock 1/8 (6), Trigger Start(7), Gate Run/Stop (8)
   * mode 5 (011): CV Mod (1-8), Gates (1-4), Clock 24ppqn (5), Clock 1/4 (6), Clock 1/2 (7), Gate Run/Stop (8)
 * Long press button to save the selected mode as default mode
+
+
+
+![maasijam mcvgo img1](Images/maasijam_mcvgo_img1.jpg)
+
+![maasijam mcvgo img2](Images/maasijam_mcvgo_img2.jpg)
+
+![maasijam mcvgo img3](Images/maasijam_mcvgo_img3.jpg)
+
+![maasijam mcvgo parts](Images/maasijam_mcvgo_parts.jpg)
