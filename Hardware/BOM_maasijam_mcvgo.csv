@@ -8,7 +8,7 @@ Jack 3.5mm Thonkiconn Mono PCB,16,https://www.thonk.co.uk/shop/thonkiconn/
 LED 3mm orange,3,
 LED 3mm red,8,
 Red Push Button Befaco,1,https://www.thonk.co.uk/shop/befaco-parts/
-74HC4051 Multiplexer,1,
+74HC595N Shift register,1,
 MCP4822 12bit dual dac,4,
 Teensy LC,1,
 IC socket 16 Pin,1,
