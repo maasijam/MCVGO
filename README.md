@@ -20,7 +20,7 @@ Overview:
 * Short click button to change mode
 * Long press button to save the selected mode as default mode
 
-
+Disclaimer: This is a DIY project. Use at your own risk.
 
 ![maasijam mcvgo img1](Images/maasijam_mcvgo_img1.jpg)
 
