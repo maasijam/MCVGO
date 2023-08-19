@@ -10,7 +10,7 @@ LED 3mm red,8,
 Red Push Button Befaco,1,https://www.thonk.co.uk/shop/befaco-parts/
 74HC595N Shift register,1,
 MCP4822 12bit dual dac,4,
-Teensy LC/4.0,1,
+Teensy LC,1,
 IC socket 16 Pin,1,
 IC socket 8 Pin,4,
 R1K 1%,24,
